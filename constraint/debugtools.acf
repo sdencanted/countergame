@@ -1,0 +1,7 @@
+
+pin led_debug[5] A23;
+pin led_debug[4] A20;
+pin led_debug[3] A17;
+pin led_debug[2] A14;
+pin led_debug[1] A11;
+pin led_debug[0] A8;

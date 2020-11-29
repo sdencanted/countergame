@@ -1,0 +1,27 @@
+module matrix_lut (
+input value [4],
+output segs [8]
+) 
+{
+  always {
+    case (value) {
+      //more than
+      0: segs = 8b10000000;
+      1: segs = 8b01000000;
+      2: segs = 8b00100000;
+      3: segs = 8b00010000;
+            
+      //less than
+      4: segs = 8b00000001;
+      5: segs = 8b00000010;
+      6: segs = 8b00000100;
+      7: segs = 8b00001000;
+              
+      //equal
+      8: segs = 8b00000000;
+      9: segs = 8b11111111;
+            
+      default: segs = 8b00000000;
+    }
+  }
+}

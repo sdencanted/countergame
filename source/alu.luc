@@ -1,0 +1,57 @@
+module alu (
+    input clk,              // 100MHz clock
+    input a[16],
+    input b[16],
+    input alufn[6],
+    output result[16]
+  ) {
+  
+  boole bool;
+  shift shif;
+  arithmetic arith;
+  compare comp;
+  arithmetic comparith;
+  .clk(clk) {
+    // The reset conditioner is used to synchronize the reset signal to the FPGA
+    // clock. This ensures the entire FPGA comes out of reset at the same time.
+    //reset_conditioner reset_cond;
+  }
+  
+  always {
+    
+    bool.a = a;
+    bool.b = b;
+    bool.alufn = alufn;
+    shif.a = a;
+    shif.b = b[3:0];
+    shif.alufn = alufn;
+    arith.a = a;
+    arith.b = b;
+    arith.alufn = alufn;
+    comparith.a = a;
+    comparith.b = b;
+    comparith.alufn = 6b000001; // subtract used to get z value
+    comp.v = comparith.v;
+    comp.z = comparith.z;
+    comp.n = comparith.n;
+    comp.alufn = alufn;
+    result=0;
+    case(alufn[5]) {
+      b0:
+        case(alufn[4]) {
+          b0: // add
+            result = arith.op;
+          b1: // boole
+            result = bool.c;
+        }
+      b1:
+        case(alufn[4]) {
+          b0: // shift
+            result = shif.c;
+          b1: // cmp
+            result = comp.cmp;
+        }
+    }
+    
+  }
+}

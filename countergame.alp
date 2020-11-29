@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="countergame" board="Alchitry Au" language="Lucid" version="3">
+  <files>
+    <src>arithmetic.luc</src>
+    <component>pipeline.luc</component>
+    <src>multi_led_display.luc</src>
+    <component>counter.luc</component>
+    <component>decoder.luc</component>
+    <src>register.luc</src>
+    <src>matrix_lut.luc</src>
+    <component>pn_gen.luc</component>
+    <src top="true">au_top.luc</src>
+    <src>led_matrix_driver.luc</src>
+    <component>reset_conditioner.luc</component>
+    <src>boole.luc</src>
+    <component>edge_detector.luc</component>
+    <src>compare.luc</src>
+    <src>alu.luc</src>
+    <component>button_conditioner.luc</component>
+    <src>shift.luc</src>
+    <constraint>debugtools.acf</constraint>
+    <constraint>sevenseg.acf</constraint>
+    <constraint lib="true">alchitry.acf</constraint>
+    <constraint>buttons.acf</constraint>
+    <constraint lib="true">au.xdc</constraint>
+    <constraint>ledmatrix.acf</constraint>
+  </files>
+</project>

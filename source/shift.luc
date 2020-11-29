@@ -1,0 +1,81 @@
+module shift (
+    input alufn[6],
+    input a[16],
+    input b[4],
+    output c[16]
+  ) {
+
+  // This function computes the shifted value of the input A by input B, by what the manner as described by ALUFN.
+  sig w_shl[16], x_shl[16], y_shl[16], z_shl[16], w_shr[16], x_shr[16], y_shr[16], z_shr[16], w_sha[16], x_sha[16], y_sha[16], z_sha[16];
+  always {
+    w_shl = 16b0;
+    x_shl = 16b0;
+    y_shl = 16b0;
+    z_shl = 16b0;
+    w_shr = 16b0;
+    x_shr = 16b0;
+    y_shr = 16b0;
+    z_shr = 16b0;
+    w_sha = 16b0;
+    x_sha = 16b0;
+    y_sha = 16b0;
+    z_sha = 16b0;
+    c = 16b0;
+    
+    case(b[3]) {
+      b0:
+        w_shl = a;
+        w_shr = a;
+        w_sha = a;
+      b1:
+        w_shl = c{a[7:0], 8b0};
+        w_shr = c{8b0, a[15:8]};
+        w_sha = c{8x{a[15]}, a[15:8]};
+    }
+    
+    case(b[2]) {
+      b0:
+        x_shl = w_shl;
+        x_shr = w_shr;
+        x_sha = w_sha;
+      b1:
+        x_shl = c{w_shl[11:0], 4b0};
+        x_shr = c{4b0, w_shr[15:4]};
+        x_sha = c{4x{a[15]}, w_sha[15:4]};
+    }
+    
+    case(b[1]) {
+      b0:
+        y_shl = x_shl;
+        y_shr = x_shr;
+        y_sha = x_sha;
+      b1:
+        y_shl = c{x_shl[13:0], 2b0};
+        y_shr = c{2b0, x_shr[15:2]};
+        y_sha = c{2x{a[15]}, x_sha[15:2]};
+    }
+    
+    case(b[0]) {
+      b0:
+        z_shl = y_shl;
+        z_shr = y_shr;
+        z_sha = y_sha;
+      b1:
+        z_shl = c{y_shl[14:0], 1b0};
+        z_shr = c{1b0, y_shr[15:1]};
+        z_sha = c{a[15], y_sha[15:1]};
+    }
+    
+    case(alufn[1]) {
+      b0:
+      case(alufn[0]) {
+        b0:
+          c = z_shl;
+        b1:
+          c = z_shr;
+      }
+      b1:
+        c = z_sha;
+    }
+  }
+}

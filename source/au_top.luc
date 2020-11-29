@@ -1,0 +1,667 @@
+global Alufn {
+  const ADD = 6h00;
+  const SUB = 6h01;
+  const AND = 6h18;
+  const OR = 6h1E;
+  const XOR = 6h16;
+  const A = 6h1A;
+  const SHL = 6h20;
+  const SHR = 6h21;
+  const SRA = 6h23;
+  const CMPEQ = 6h33;
+  const CMPLT = 6h35;
+  const CMPLE = 6h37;
+  const MUL = 6h02;
+}
+global Gamestate{
+  const INIT = 6d0;
+  const START = 6d1;
+  const RESET = 6d2;
+  const IDLE = 6d3;
+  const CHECKP1ANSTRUE = 6d4;
+  const CHECKP1ANSFALSE = 6d5;
+  const BRANCHP1ISCORRECT = 6d6;
+  const INCREASEP1 = 6d7;
+  const CHECKP1SCORE = 6d8;
+  const BRANCHP1SCORE = 6d9;
+  const P1WIN = 6d10;
+  const P2LOSE = 6d11;
+  const CHECKP2ANSTRUE = 6d12;
+  const CHECKP2ANSFALSE = 6d13;
+  const BRANCHP2ISCORRECT = 6d14;
+  const INCREASEP2 = 6d15;
+  const CHECKP2SCORE = 6d16;
+  const BRANCHP2SCORE = 6d17;
+  const P2WIN = 6d18;
+  const P1LOSE = 6d19;
+  const GAMEOVER = 6d20;
+  const RESETWINP1 = 6d21;
+  const RESETWINP2 = 6d22;
+  const RESETSCOREP1 = 6d23;
+  const RESETSCOREP2 = 6d24;
+  const RNDNUMA = 6d25;
+  const CHECKNUMA9 = 6d26;
+  const BRANCHNUMA9 = 6d27;
+  const RNDNUMB = 6d28;
+  const CHECKNUMB9 = 6d29;
+  const BRANCHNUMB9 = 6d30;
+  const RNDSIGN = 6d31;
+  const CHECKSIGN3 = 6d32;
+  const BRANCHSIGN = 6d33;
+  const LESSTHAN = 6d34;
+  const MORETHAN = 6d35;
+  const EQUALTO = 6d36;
+
+
+}
+global Reg_addr{
+  const P1SCORE = 5h0;
+  const P1BUTTON = 5h1;
+  const P2SCORE = 5h2;
+  const P2BUTTON = 5h3;
+  const NUMA = 5h4;
+  const NUMB = 5h5;
+  const ANS_CHECK = 5h6;
+  const SYM_M = 5h7; // probably unused
+  const BUTTON_CORRECT = 5h8;
+  const SCOREIS3 = 5h9;
+  const P1WIN = 5hA;
+  const P2WIN = 5hB;
+  const RANDINT1 = 5hC; // probably unused
+  const RANDINT2 = 5hD; // probably unused
+  const SIGN = 5hE; // should sub to sym_m
+  const RANDINT_SMALLENOUGH = 5hF;
+
+}
+global Aselmux {
+  const RA=3d0;
+  const ONE=3d1;
+  const ZERO=3d2;
+  const THREE=3d3;
+  const ONEA=3d4;
+  const ONEB=3d5;
+}
+global Bselmux {
+  const RB=3d0;
+  const ONE=3d1;
+  const ZERO=3d2;
+  const THREE=3d3;
+  const SEVEN=3d4;
+  const NINE=3d5;
+}
+global Wdselmux {
+  const ALU=3d0;
+  const FFFF=3d1;
+  const ZERO = 3d2;
+  const RNGESUSNUM=3d3;
+  const RNGESUSSIGN=3d4;
+}
+module au_top (
+    input clk,              // 100MHz clock
+    input rst_n,            // reset button (active low)
+    output led [8],         // 8 user controllable LEDs
+    input usb_rx,           // USB->Serial input
+    output usb_tx,          // USB->Serial output
+    //output io_led [3][8],   // LEDs on IO Shield
+    //output io_seg [8],      // 7-segment LEDs on IO Shield
+    //output io_sel [4],      // Digit select on IO Shield
+    //input io_button [5],    // 5 buttons on IO Shield
+    //input io_dip [3][8],     // DIP switches on IO Shield
+    output led_matrix[2][8], // led led_matrix
+    output seven_seg[4][4], // seven segment display
+    input button1t, // player inputs
+    input button1f,
+    input button2t,
+    input button2f,
+    input buttonreset, // internal pullup
+    output led_debug[6] // debug 
+  ) {
+  
+  sig rst;                  // reset signal
+  sig wdsel[3];
+  sig asel[3];
+  sig bsel[3];
+  sig rb_data_fsm[16]; // rb_data sent to fsm
+  sig ra[5];
+  sig rb[5];
+  sig rc[5];
+  sig we;
+  sig wd[16];
+  .clk(clk) {
+    // The reset conditioner is used to synchronize the reset signal to the FPGA
+    // clock. This ensures the entire FPGA comes out of reset at the same time.
+    reset_conditioner reset_cond;
+    button_conditioner player1t;
+    button_conditioner player1f;
+    button_conditioner player2t;
+    button_conditioner player2f;
+    button_conditioner gamereset;
+    edge_detector edge1t(#RISE(1), #FALL(0));
+    edge_detector edge1f(#RISE(1), #FALL(0));
+    edge_detector edge2t(#RISE(1), #FALL(0));
+    edge_detector edge2f(#RISE(1), #FALL(0));
+    edge_detector edgereset(#RISE(0), #FALL(1)); // internal pullup
+    register register;
+    alu alu;
+    dff fsm_state[6];
+    dff seed[32];
+    .rst(rst) {
+      led_matrix_driver matrix;
+      pn_gen randgen;
+      
+      //multi_seg_display seg_display;
+    }
+  }
+  //decoder num_to_seg (#WIDTH(3));
+  //decoder num_to_digit (#WIDTH(3));
+  always {
+    
+    reset_cond.in = ~rst_n; // input raw inverted reset signal
+    rst = reset_cond.out;   // conditioned reset
+    
+    usb_tx = usb_rx;        // loop serial port
+    
+    led = 8h00;             // turn LEDs off
+    led_matrix[0] = 8b0; // turn LED matrix off
+    
+    
+    //default rng value
+    randgen.next=0; // do not generate a new value yet
+    randgen.seed=seed.q;
+    
+    //default mux values
+    asel=0;
+    bsel=0;
+    wdsel=0;
+    
+    //connect matrix signals to led matrix
+    led_matrix[0]=matrix.col;
+    led_matrix[1]=matrix.row;
+    
+    //register default inputs
+    ra=0;
+    rb=0;
+    we=0;
+    rc=0;
+    wd=0;
+    //connect register rbdata to fsm
+    rb_data_fsm=register.rb_data;
+    
+    //connect register outputs to LED matrix
+    matrix.sign=register.sign;
+    
+    //connect register outputs to 7 segment displays
+    //player 1 score
+    seven_seg[0]=register.p1_score;
+    //player 2 score
+    seven_seg[3]=register.p2_score;
+    //number A
+    seven_seg[1]=register.numa;
+    //number B
+    seven_seg[2]=register.numb;
+    
+    // default alu values
+    alu.a=0;
+    alu.b=0;
+    alu.alufn=0;
+    
+    // connect buttons to debouncers and edge detectors
+    player1t.in=button1t;
+    edge1t.in=player1t.out;
+    player1f.in=button1f;
+    edge1f.in=player1f.out;
+    player2t.in=button2t;
+    edge2t.in=player2t.out;
+    player2f.in=button2f;
+    edge2f.in=player2f.out;
+    
+    gamereset.in=buttonreset;
+    edgereset.in=gamereset.out;
+    led_debug[1:0]=randgen.num[1:0];
+    led_debug[2]=gamereset.out;
+    led_debug[3]=register.answer;
+    led_debug[5]=register.p1_win;
+    led_debug[4]=register.p2_win;
+    
+    case(fsm_state.q){
+      Gamestate.INIT:
+        fsm_state.d=Gamestate.START;
+      Gamestate.START:
+        fsm_state.d=Gamestate.RESET;
+      Gamestate.RESET:
+        fsm_state.d=Gamestate.RNDNUMA;
+      Gamestate.IDLE:
+        if(edge1t.out==1) fsm_state.d=Gamestate.CHECKP1ANSTRUE;
+        else if(edge1f.out==1) fsm_state.d=Gamestate.CHECKP1ANSFALSE;
+        else if(edge2t.out==1) fsm_state.d=Gamestate.CHECKP2ANSTRUE;
+        else if(edge2f.out==1) fsm_state.d=Gamestate.CHECKP2ANSFALSE;
+      Gamestate.CHECKP1ANSTRUE:
+        alu.alufn=Alufn.CMPEQ;
+        asel=Aselmux.ONE;
+        bsel=Bselmux.RB;
+        we=1;
+        ra= 0;
+        rb= Reg_addr.ANS_CHECK;
+        wdsel= Wdselmux.ALU;
+        rc=Reg_addr.BUTTON_CORRECT;
+        fsm_state.d=Gamestate.BRANCHP1ISCORRECT;
+      Gamestate.CHECKP1ANSFALSE:
+        alu.alufn=Alufn.CMPEQ;
+        asel=Aselmux.ZERO;
+        bsel=Bselmux.RB;
+        we= 1;
+        ra= 0;
+        rb= Reg_addr.ANS_CHECK;
+        wdsel= Wdselmux.ALU;
+        rc= Reg_addr.BUTTON_CORRECT;
+        fsm_state.d=Gamestate.BRANCHP1ISCORRECT;
+      Gamestate.BRANCHP1ISCORRECT:
+        alu.alufn=0;
+        asel=0;
+        bsel=0;
+        we=0;
+        ra= 0;
+        rb= Reg_addr.BUTTON_CORRECT;
+        wdsel= 0;
+        rc=0;
+        case(rb_data_fsm[0]){
+          1:fsm_state.d=Gamestate.INCREASEP1;
+          0:fsm_state.d=Gamestate.RESET;
+        }
+        
+      Gamestate.INCREASEP1:
+        alu.alufn=Alufn.ADD;
+        asel=Aselmux.RA;
+        bsel=Bselmux.ONE;
+        we=1;
+        ra=Reg_addr.P1SCORE;
+        rb= 0;
+        wdsel= Wdselmux.ALU;
+        rc=Reg_addr.P1SCORE;
+        fsm_state.d=Gamestate.CHECKP1SCORE;
+      Gamestate.CHECKP1SCORE:
+        alu.alufn=Alufn.CMPEQ;
+        asel=Aselmux.RA;
+        bsel=Bselmux.THREE;
+        we=1;
+        ra=Reg_addr.P1SCORE;
+        rb=0;
+        wdsel= Wdselmux.ALU;
+        rc= Reg_addr.SCOREIS3;
+        fsm_state.d=Gamestate.BRANCHP1SCORE;
+      Gamestate.BRANCHP1SCORE:
+        alu.alufn=0;
+        asel=0;
+        bsel=0;
+        we=0;
+        ra=0;
+        rb=Reg_addr.SCOREIS3;
+        wdsel= 0;
+        rc= 0;
+        case(rb_data_fsm[0]){
+          1: fsm_state.d=Gamestate.P1WIN;
+          0: fsm_state.d=Gamestate.RESET;
+      }
+      Gamestate.P1WIN:
+        alu.alufn=0;
+        asel=0;
+        bsel=0;
+        we=1;
+        ra=0;
+        rb=0;
+        wdsel= Wdselmux.FFFF;
+        rc= Reg_addr.P1WIN;
+        fsm_state.d=Gamestate.P2LOSE;
+      Gamestate.P2LOSE:
+        alu.alufn=0;
+        asel=0;
+        bsel=0;
+        we=1;
+        ra=0;
+        rb=0;
+        wdsel= Wdselmux.ZERO;
+        rc= Reg_addr.P2WIN;
+        fsm_state.d=Gamestate.GAMEOVER;
+      Gamestate.CHECKP2ANSTRUE:
+        alu.alufn=Alufn.CMPEQ;
+        asel=Aselmux.ONE;
+        bsel=Bselmux.RB;
+        we=1;
+        ra= 0;
+        rb= Reg_addr.ANS_CHECK;
+        wdsel= Wdselmux.ALU;
+        rc=Reg_addr.BUTTON_CORRECT;
+        fsm_state.d=Gamestate.BRANCHP2ISCORRECT;
+      Gamestate.CHECKP2ANSFALSE:
+        alu.alufn=Alufn.CMPEQ;
+        asel=Aselmux.ZERO;
+        bsel=Bselmux.RB;
+        we= 1;
+        ra= 0;
+        rb= Reg_addr.ANS_CHECK;
+        wdsel= Wdselmux.ALU;
+        rc= Reg_addr.BUTTON_CORRECT;
+        fsm_state.d=Gamestate.BRANCHP2ISCORRECT;
+      Gamestate.BRANCHP2ISCORRECT:
+        alu.alufn=0;
+        asel=0;
+        bsel=0;
+        we=0;
+        ra= 0;
+        rb= Reg_addr.BUTTON_CORRECT;
+        wdsel= 0;
+        rc=0;
+        case(rb_data_fsm[0]){
+          1:fsm_state.d=Gamestate.INCREASEP2;
+          0:fsm_state.d=Gamestate.RESET;
+        }
+        
+      Gamestate.INCREASEP2:
+        alu.alufn=Alufn.ADD;
+        asel=Aselmux.RA;
+        bsel=Bselmux.ONE;
+        we=1;
+        ra=Reg_addr.P2SCORE;
+        rb= 0;
+        wdsel= Wdselmux.ALU;
+        rc=Reg_addr.P2SCORE;
+        fsm_state.d=Gamestate.CHECKP2SCORE;
+      Gamestate.CHECKP2SCORE:
+        alu.alufn=Alufn.CMPEQ;
+        asel=Aselmux.RA;
+        bsel=Bselmux.THREE;
+        we=1;
+        ra=Reg_addr.P2SCORE;
+        rb=0;
+        wdsel= Wdselmux.ALU;
+        rc= Reg_addr.SCOREIS3;
+        fsm_state.d=Gamestate.BRANCHP2SCORE;
+      Gamestate.BRANCHP2SCORE:
+        alu.alufn=0;
+        asel=0;
+        bsel=0;
+        we=0;
+        ra=0;
+        rb=Reg_addr.SCOREIS3;
+        wdsel= 0;
+        rc= 0;
+        case(rb_data_fsm[0]){
+          1: fsm_state.d=Gamestate.P2WIN;
+          0: fsm_state.d=Gamestate.RESET;
+        }
+      Gamestate.P2WIN:
+        alu.alufn=0;
+        asel=0;
+        bsel=0;
+        we=1;
+        ra=0;
+        rb=0;
+        wdsel= Wdselmux.FFFF;
+        rc= Reg_addr.P2WIN;
+        fsm_state.d=Gamestate.P1LOSE;
+      Gamestate.P1LOSE:
+        alu.alufn=0;
+        asel=0;
+        bsel=0;
+        we=1;
+        ra=0;
+        rb=0;
+        wdsel= Wdselmux.ZERO;
+        rc= Reg_addr.P1WIN;
+        fsm_state.d=Gamestate.GAMEOVER;
+      Gamestate.GAMEOVER:
+        alu.alufn=0;
+        asel=0;
+        bsel=0;
+        we=0;
+        ra=0;
+        rb=0;
+        wdsel=0;
+        rc=0;
+        case(edgereset.out){
+          0:fsm_state.d=Gamestate.GAMEOVER;
+          1:fsm_state.d=Gamestate.RESETWINP1;
+        }
+      Gamestate.RESETWINP1:
+        alu.alufn=0;
+        asel=0;
+        bsel=0;
+        we=1;
+        ra=0;
+        rb=0;
+        wdsel=Wdselmux.ZERO;
+        rc=Reg_addr.P1WIN;
+        fsm_state.d=Gamestate.RESETWINP2;
+      Gamestate.RESETWINP2:
+        alu.alufn=0;
+        asel=0;
+        bsel=0;
+        we=1;
+        ra=0;
+        rb=0;
+        wdsel=Wdselmux.ZERO;
+        rc=Reg_addr.P2WIN;
+        fsm_state.d=Gamestate.RESETSCOREP1;
+      Gamestate.RESETSCOREP1:
+        alu.alufn=0;
+        asel=0;
+        bsel=0;
+        we=1;
+        ra=0;
+        rb=0;
+        wdsel=Wdselmux.ZERO;
+        rc=Reg_addr.P1SCORE;
+        fsm_state.d=Gamestate.RESETSCOREP2;
+      Gamestate.RESETSCOREP2:
+        alu.alufn=0;
+        asel=0;
+        bsel=0;
+        we=1;
+        ra=0;
+        rb=0;
+        wdsel=Wdselmux.ZERO;
+        rc=Reg_addr.P2SCORE;
+        fsm_state.d=Gamestate.RESET;
+      Gamestate.RNDNUMA:
+        alu.alufn=0;
+        asel=0;
+        bsel=0;
+        we=1;
+        ra=0;
+        rb=0;
+        wdsel=Wdselmux.RNGESUSNUM;
+        rc=Reg_addr.NUMA;
+        fsm_state.d=Gamestate.CHECKNUMA9;
+        randgen.next=1;//change number for next iteration
+        seed.d=seed.q+1;
+        
+      Gamestate.CHECKNUMA9:
+        alu.alufn=Alufn.CMPLE;
+        asel=Aselmux.RA;
+        bsel=Bselmux.NINE;
+        we=1;
+        ra=Reg_addr.NUMA;
+        rb=Reg_addr.NUMA;//debug
+        wdsel=Wdselmux.ALU;
+        rc=Reg_addr.RANDINT_SMALLENOUGH;
+        fsm_state.d=Gamestate.BRANCHNUMA9;
+      Gamestate.BRANCHNUMA9:
+        alu.alufn=0;
+        asel=0;
+        bsel=0;
+        we=0;
+        ra=0;
+        rb=Reg_addr.RANDINT_SMALLENOUGH;
+        wdsel= 0;
+        rc= 0;
+        case(rb_data_fsm[0]){
+          1: fsm_state.d=Gamestate.RNDNUMB;
+          0: fsm_state.d=Gamestate.RNDNUMA;
+        }
+      Gamestate.RNDNUMB:
+        alu.alufn=0;
+        asel=0;
+        bsel=0;
+        we=1;
+        ra=0;
+        rb=0;
+        wdsel=Wdselmux.RNGESUSNUM;
+        rc=Reg_addr.NUMB;
+        fsm_state.d=Gamestate.CHECKNUMB9;
+        randgen.next=1;//change number for next iteration
+        seed.d=seed.q+1;
+      Gamestate.CHECKNUMB9:
+        alu.alufn=Alufn.CMPLE;
+        asel=Aselmux.RA;
+        bsel=Bselmux.NINE;
+        we=1;
+        ra=Reg_addr.NUMB;
+        rb=0;
+        wdsel=Wdselmux.ALU;
+        rc=Reg_addr.RANDINT_SMALLENOUGH;
+        fsm_state.d=Gamestate.BRANCHNUMB9;
+      Gamestate.BRANCHNUMB9:
+        alu.alufn=0;
+        asel=0;
+        bsel=0;
+        we=0;
+        ra=0;
+        rb=Reg_addr.RANDINT_SMALLENOUGH;
+        wdsel= 0;
+        rc= 0;
+        case(rb_data_fsm[0]){
+          1: fsm_state.d=Gamestate.RNDSIGN;
+          0: fsm_state.d=Gamestate.RNDNUMB;
+        }
+      Gamestate.RNDSIGN:
+        alu.alufn=0;
+        asel=0;
+        bsel=0;
+        we=1;
+        ra=0;
+        rb=0;
+        wdsel=Wdselmux.RNGESUSSIGN;
+        rc=Reg_addr.SYM_M;
+        fsm_state.d=Gamestate.BRANCHSIGN;
+        randgen.next=1;//change number for next iteration
+        seed.d=seed.q+1;
+      Gamestate.BRANCHSIGN:
+        alu.alufn=0;
+        asel=0;
+        bsel=0;
+        we=0;
+        ra=0;
+        rb=Reg_addr.SYM_M;
+        wdsel= 0;
+        rc= 0;
+        case(rb_data_fsm[1:0]){
+          0: fsm_state.d=Gamestate.LESSTHAN;
+          1: fsm_state.d=Gamestate.MORETHAN;
+          2: fsm_state.d=Gamestate.EQUALTO;
+          3: fsm_state.d=Gamestate.RNDSIGN;
+        }
+      Gamestate.LESSTHAN:
+        alu.alufn=Alufn.CMPLT;
+        asel=Aselmux.RA;
+        bsel=Bselmux.RB;
+        we=1;
+        ra=Reg_addr.NUMA;
+        rb=Reg_addr.NUMB;
+        wdsel=Wdselmux.ALU;
+        rc=Reg_addr.ANS_CHECK;
+        fsm_state.d=Gamestate.IDLE;
+      Gamestate.MORETHAN:
+        alu.alufn=Alufn.CMPLT;
+        asel=Aselmux.RA;
+        bsel=Bselmux.RB;
+        we=1;
+        ra=Reg_addr.NUMB;
+        rb=Reg_addr.NUMA;
+        wdsel=Wdselmux.ALU;
+        rc=Reg_addr.ANS_CHECK;
+        fsm_state.d=Gamestate.IDLE;
+      Gamestate.EQUALTO:
+        alu.alufn=Alufn.CMPEQ;
+        asel=Aselmux.RA;
+        bsel=Bselmux.RB;
+        we=1;
+        ra=Reg_addr.NUMA;
+        rb=Reg_addr.NUMB;
+        wdsel=Wdselmux.ALU;
+        rc=Reg_addr.ANS_CHECK;
+        fsm_state.d=Gamestate.IDLE;
+      default:
+        fsm_state.d=Gamestate.START;
+    }
+    
+    
+    //wdsel
+    case(wdsel){
+      0:
+        wd=alu.result;
+      1:
+        wd=16hFFFF;
+      2:
+        wd=0;
+      3:
+        wd=randgen.num[3:0];
+      4:
+        wd=randgen.num[1:0];
+    }
+    
+    //asel
+    case(asel){
+      0: alu.a=register.ra_data;
+      1: alu.a=16d1;
+      2: alu.a=16d0;
+      3: alu.a=16d3;
+      4: alu.a=16h1A;//feels redundant
+      5: alu.a=16h1B;//feels redundant
+    }
+    
+    //bsel
+    case(bsel){
+      0: alu.b=register.rb_data;
+      1: alu.b=16d1;
+      2: alu.b=16d0;
+      3: alu.b=16d3;//check for score and sign state
+      4: alu.b=16d7;//feels redundant
+      5: alu.b=16d9;//check if number is single digit
+    }
+    
+    //register values
+    register.ra=ra;
+    register.rb=rb;
+    register.write_data=wd;
+    register.write_enable=we;
+    register.rc=rc;
+    //rng_edge.in=player1t.out;
+    /* if(player1t.out==1){
+    
+      if(rng_edge.out==1){
+        randgen.next=1;
+        register.write_address=Reg_addr.NUMA;
+        wdsel=2d3;// select rngesus
+        register.write_enable=1;
+      }
+      else{
+        
+        register.write_address=Reg_addr.SYM_M;
+        wdsel=2d0;// select
+        register.write_data=16d1;
+        register.write_enable=1;
+      }
+    }
+    else{
+      register.write_address=Reg_addr.SYM_M;
+      register.write_data=16d0;
+      register.write_enable=1;
+    } */
+    //seg_display.decimal = 4b0000; // no decimal points
+    //led_matrix[0] = led_display.seg; 
+    //led_matrix[1] = ~led_display.sel;// these pins are active when ground so invert
+    //seg_display.values = {4d8, 4d1, 4d2, 4d3};
+    //seven_seg[0] = seg_display.seg; 
+    //seven_seg=4x{{randgen.num[3:0]}};
+  }
+}

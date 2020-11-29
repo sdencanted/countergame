@@ -1,0 +1,299 @@
+module boole (
+    input alufn[6],
+    input a[16],
+    input b[16],
+    output c[16]
+  ) {
+  
+  // This function computes the piecewise boolean between two arrays, with the boolean function given by ALUFN.
+  
+  always {
+    c = 16b0;
+    case(b[0]) {
+        b0:
+          case(a[0]) {
+            b0:
+              c[0] = alufn[0];
+            b1:
+              c[0] = alufn[1];
+          }
+        b1:
+          case(a[0]) {
+            b0:
+              c[0] = alufn[2];
+            b1:
+              c[0] = alufn[3];
+          }
+      }
+    
+
+    case(b[1]) {
+        b0:
+          case(a[1]) {
+            b0:
+              c[1] = alufn[0];
+            b1:
+              c[1] = alufn[1];
+          }
+        b1:
+          case(a[1]) {
+            b0:
+              c[1] = alufn[2];
+            b1:
+              c[1] = alufn[3];
+          }
+      }
+    
+
+    case(b[2]) {
+        b0:
+          case(a[2]) {
+            b0:
+              c[2] = alufn[0];
+            b1:
+              c[2] = alufn[1];
+          }
+        b1:
+          case(a[2]) {
+            b0:
+              c[2] = alufn[2];
+            b1:
+              c[2] = alufn[3];
+          }
+      }
+    
+
+    case(b[3]) {
+        b0:
+          case(a[3]) {
+            b0:
+              c[3] = alufn[0];
+            b1:
+              c[3] = alufn[1];
+          }
+        b1:
+          case(a[3]) {
+            b0:
+              c[3] = alufn[2];
+            b1:
+              c[3] = alufn[3];
+          }
+      }
+    
+
+    case(b[4]) {
+        b0:
+          case(a[4]) {
+            b0:
+              c[4] = alufn[0];
+            b1:
+              c[4] = alufn[1];
+          }
+        b1:
+          case(a[4]) {
+            b0:
+              c[4] = alufn[2];
+            b1:
+              c[4] = alufn[3];
+          }
+      }
+    
+
+    case(b[5]) {
+        b0:
+          case(a[5]) {
+            b0:
+              c[5] = alufn[0];
+            b1:
+              c[5] = alufn[1];
+          }
+        b1:
+          case(a[5]) {
+            b0:
+              c[5] = alufn[2];
+            b1:
+              c[5] = alufn[3];
+          }
+      }
+    
+
+    case(b[6]) {
+        b0:
+          case(a[6]) {
+            b0:
+              c[6] = alufn[0];
+            b1:
+              c[6] = alufn[1];
+          }
+        b1:
+          case(a[6]) {
+            b0:
+              c[6] = alufn[2];
+            b1:
+              c[6] = alufn[3];
+          }
+      }
+    
+
+    case(b[7]) {
+        b0:
+          case(a[7]) {
+            b0:
+              c[7] = alufn[0];
+            b1:
+              c[7] = alufn[1];
+          }
+        b1:
+          case(a[7]) {
+            b0:
+              c[7] = alufn[2];
+            b1:
+              c[7] = alufn[3];
+          }
+      }
+    
+
+    case(b[8]) {
+        b0:
+          case(a[8]) {
+            b0:
+              c[8] = alufn[0];
+            b1:
+              c[8] = alufn[1];
+          }
+        b1:
+          case(a[8]) {
+            b0:
+              c[8] = alufn[2];
+            b1:
+              c[8] = alufn[3];
+          }
+      }
+    
+
+    case(b[9]) {
+        b0:
+          case(a[9]) {
+            b0:
+              c[9] = alufn[0];
+            b1:
+              c[9] = alufn[1];
+          }
+        b1:
+          case(a[9]) {
+            b0:
+              c[9] = alufn[2];
+            b1:
+              c[9] = alufn[3];
+          }
+      }
+    
+
+    case(b[10]) {
+        b0:
+          case(a[10]) {
+            b0:
+              c[10] = alufn[0];
+            b1:
+              c[10] = alufn[1];
+          }
+        b1:
+          case(a[10]) {
+            b0:
+              c[10] = alufn[2];
+            b1:
+              c[10] = alufn[3];
+          }
+      }
+    
+
+    case(b[11]) {
+        b0:
+          case(a[11]) {
+            b0:
+              c[11] = alufn[0];
+            b1:
+              c[11] = alufn[1];
+          }
+        b1:
+          case(a[11]) {
+            b0:
+              c[11] = alufn[2];
+            b1:
+              c[11] = alufn[3];
+          }
+      }
+    
+
+    case(b[12]) {
+        b0:
+          case(a[12]) {
+            b0:
+              c[12] = alufn[0];
+            b1:
+              c[12] = alufn[1];
+          }
+        b1:
+          case(a[12]) {
+            b0:
+              c[12] = alufn[2];
+            b1:
+              c[12] = alufn[3];
+          }
+      }
+    
+
+    case(b[13]) {
+        b0:
+          case(a[13]) {
+            b0:
+              c[13] = alufn[0];
+            b1:
+              c[13] = alufn[1];
+          }
+        b1:
+          case(a[13]) {
+            b0:
+              c[13] = alufn[2];
+            b1:
+              c[13] = alufn[3];
+          }
+      }
+    
+
+    case(b[14]) {
+        b0:
+          case(a[14]) {
+            b0:
+              c[14] = alufn[0];
+            b1:
+              c[14] = alufn[1];
+          }
+        b1:
+          case(a[14]) {
+            b0:
+              c[14] = alufn[2];
+            b1:
+              c[14] = alufn[3];
+          }
+      }
+    
+
+    case(b[15]) {
+        b0:
+          case(a[15]) {
+            b0:
+              c[15] = alufn[0];
+            b1:
+              c[15] = alufn[1];
+          }
+        b1:
+          case(a[15]) {
+            b0:
+              c[15] = alufn[2];
+            b1:
+              c[15] = alufn[3];
+          }
+      }
+  }
+}

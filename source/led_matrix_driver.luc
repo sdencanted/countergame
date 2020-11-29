@@ -1,0 +1,25 @@
+module led_matrix_driver (
+    input clk,  // clock
+    input rst,  // reset
+    input sign[2],
+    output row[8],
+    output col[8]
+  ) {
+  .clk(clk) {
+    .rst(rst) {
+      multi_led_display led_display;
+    }
+  }
+  always {
+    led_display.values={4d8,4d8,4d8,4d8,4d8,4d8,4d8,4d8};
+    case(sign){
+      0: led_display.values={4d4,4d5,4d6,4d7,4d7,4d6,4d5,4d4}; // less than
+      1: led_display.values={4d0,4d1,4d2,4d3,4d3,4d2,4d1,4d0}; // more than
+      2: led_display.values={4d8,4d8,4d9,4d8,4d8,4d9,4d8,4d8}; // equal to
+      3: led_display.values={4d8,4d8,4d8,4d8,4d8,4d8,4d8,4d8}; // nothing
+    }
+    
+    col = led_display.seg;
+    row = ~led_display.sel[0+:8];// these pins are active when ground so invert
+  }
+}

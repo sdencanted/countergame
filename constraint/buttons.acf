@@ -1,0 +1,5 @@
+pin button1t B24;
+pin button1f B21;
+pin button2t B18;
+pin button2f B15;
+pin buttonreset A2 pullup;

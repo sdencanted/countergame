@@ -1,0 +1,27 @@
+module compare (
+    input z,  // z,v,n from arithmetic
+    input n,  
+    input v,
+    input alufn[6], //alufn signals for compare module
+    
+    output cmp[16]
+  ) {
+
+  
+  //signal and module instances
+
+  
+  always {
+    
+    cmp[15:1] = 15b0; //high order 15 bits all 0
+  
+    // value for cmp LSB
+    case (alufn) {
+      6b110011: cmp[0] = z; // compare for =
+      6b110101: cmp[0] = n ^ v; //compare for <
+      6b110111: cmp[0] = z | (n ^ v); //compare for <=
+      default: cmp[0] = b0;
+      
+    
+  }
+}

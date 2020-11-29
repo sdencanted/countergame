@@ -1,0 +1,36 @@
+module arithmetic (
+    input a[16],
+    input b[16],
+    input alufn[6],
+
+    output z,
+    output v,
+    output n,
+    output op[16]
+  ) {
+  
+  //signal and module instances
+  sig arith[16];
+  // This module performs arithmetic operations on both numbers a and b based on the ALUFN.
+  always {
+    
+    case (alufn) {
+      6b000000: arith = $signed(a) + $signed(b); //add
+      6b000001: arith = $signed(a) - $signed(b); //subtract
+      6b000010: arith = $signed(a) * $signed(b); //times
+      default: arith = 0;
+    }
+    
+    op = arith;
+    
+    //z=1 if all arith==0
+    if (arith == 16b0) {z = 1;} else {z = 0;}
+    
+    //overflow
+    v = (a[15] & (b[15] ^ alufn[0]) & ~arith[15]) | (~a[15] & ~(b[15] ^ alufn[0]) & arith[15]);
+    
+    //n=1 if arith negative
+    n = arith[15];
+     
+  }
+}

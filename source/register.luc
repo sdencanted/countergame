@@ -1,0 +1,44 @@
+module register (
+    input clk,  // clock
+    input ra[5],
+    input rb[5],
+    output ra_data[16],
+    output rb_data[16],
+    input rc[5],
+    input write_data[16],
+    input write_enable,
+    output numa[4],
+    output numb[4],
+    output p1_score[4],
+    output p2_score[4],
+    output sign[2],
+    output answer, // debug
+    output p1_win,
+    output p2_win
+  ) {
+  dff registers[32][16](.clk(clk)); 
+  always {
+    //always read 
+    ra_data = registers.q[ra];
+    rb_data = registers.q[rb];
+    
+    // check if write_en and its not R31 
+    if (rc != b11111 && write_enable){
+        registers.d[rc] = write_data;
+    }
+    
+    // check if its not R31 
+    if (ra == b11111) ra_data = h0000;
+    if (rb == b11111) rb_data = h0000;
+    
+    // outputs to LEDs
+    numa=registers.q[4][3:0];
+    numb=registers.q[5][3:0];
+    p1_score=registers.q[0][3:0];
+    p2_score=registers.q[2][3:0];
+    sign=registers.q[7][1:0];
+    answer=registers.q[6][0];
+    p1_win=registers.q[10][0];
+    p2_win=registers.q[11][0];
+  }
+}
