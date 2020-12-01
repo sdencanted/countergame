@@ -18,7 +18,7 @@ module alu_6 (
   reg [6-1:0] M_bool_alufn;
   reg [16-1:0] M_bool_a;
   reg [16-1:0] M_bool_b;
-  boole_10 bool (
+  boole_11 bool (
     .alufn(M_bool_alufn),
     .a(M_bool_a),
     .b(M_bool_b),
@@ -29,7 +29,7 @@ module alu_6 (
   reg [6-1:0] M_shif_alufn;
   reg [16-1:0] M_shif_a;
   reg [4-1:0] M_shif_b;
-  shift_11 shif (
+  shift_12 shif (
     .alufn(M_shif_alufn),
     .a(M_shif_a),
     .b(M_shif_b),
@@ -43,7 +43,7 @@ module alu_6 (
   reg [16-1:0] M_arith_a;
   reg [16-1:0] M_arith_b;
   reg [6-1:0] M_arith_alufn;
-  arithmetic_12 arith (
+  arithmetic_13 arith (
     .a(M_arith_a),
     .b(M_arith_b),
     .alufn(M_arith_alufn),
@@ -58,7 +58,7 @@ module alu_6 (
   reg [1-1:0] M_comp_n;
   reg [1-1:0] M_comp_v;
   reg [6-1:0] M_comp_alufn;
-  compare_13 comp (
+  compare_14 comp (
     .z(M_comp_z),
     .n(M_comp_n),
     .v(M_comp_v),
@@ -73,7 +73,7 @@ module alu_6 (
   reg [16-1:0] M_comparith_a;
   reg [16-1:0] M_comparith_b;
   reg [6-1:0] M_comparith_alufn;
-  arithmetic_12 comparith (
+  arithmetic_13 comparith (
     .a(M_comparith_a),
     .b(M_comparith_b),
     .alufn(M_comparith_alufn),

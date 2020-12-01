@@ -9,6 +9,7 @@
     <src>register.luc</src>
     <src>matrix_lut.luc</src>
     <component>pn_gen.luc</component>
+    <component>bin_to_dec.luc</component>
     <src top="true">au_top.luc</src>
     <src>led_matrix_driver.luc</src>
     <component>reset_conditioner.luc</component>

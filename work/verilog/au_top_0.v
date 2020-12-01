@@ -121,8 +121,8 @@ module au_top_0 (
   );
   wire [16-1:0] M_register_ra_data;
   wire [16-1:0] M_register_rb_data;
-  wire [4-1:0] M_register_numa;
-  wire [4-1:0] M_register_numb;
+  wire [7-1:0] M_register_numa;
+  wire [7-1:0] M_register_numb;
   wire [4-1:0] M_register_p1_score;
   wire [4-1:0] M_register_p2_score;
   wire [2-1:0] M_register_sign;
@@ -186,6 +186,20 @@ module au_top_0 (
     .num(M_randgen_num)
   );
   
+  wire [8-1:0] M_digits_a_digits;
+  reg [7-1:0] M_digits_a_value;
+  bin_to_dec_9 digits_a (
+    .value(M_digits_a_value),
+    .digits(M_digits_a_digits)
+  );
+  
+  wire [8-1:0] M_digits_b_digits;
+  reg [7-1:0] M_digits_b_value;
+  bin_to_dec_9 digits_b (
+    .value(M_digits_b_value),
+    .digits(M_digits_b_digits)
+  );
+  
   always @* begin
     M_seed_d = M_seed_q;
     M_fsm_state_d = M_fsm_state_q;
@@ -207,12 +221,41 @@ module au_top_0 (
     we = 1'h0;
     rc = 1'h0;
     wd = 1'h0;
+    seven_seg = 16'h0000;
     rb_data_fsm = M_register_rb_data;
     M_matrix_sign = M_register_sign;
-    seven_seg[0+3-:4] = M_register_p1_score;
-    seven_seg[12+3-:4] = M_register_p2_score;
-    seven_seg[4+3-:4] = M_register_numa;
-    seven_seg[8+3-:4] = M_register_numb;
+    M_digits_a_value = M_register_numa[0+6-:7];
+    M_digits_b_value = M_register_numb[0+6-:7];
+    led_debug = 1'h0;
+    
+    case (M_register_p1_score)
+      1'h1: begin
+        led_debug[0+0-:1] = 1'h1;
+      end
+      2'h2: begin
+        led_debug[0+1-:2] = 2'h3;
+      end
+      2'h3: begin
+        led_debug[0+2-:3] = 3'h7;
+      end
+    endcase
+    led_debug[2+0-:1] = M_register_numa[6+0-:1];
+    
+    case (M_register_p2_score)
+      1'h1: begin
+        led_debug[3+0-:1] = 1'h1;
+      end
+      2'h2: begin
+        led_debug[3+1-:2] = 2'h3;
+      end
+      2'h3: begin
+        led_debug[3+2-:3] = 3'h7;
+      end
+    endcase
+    seven_seg[0+3-:4] = M_digits_a_digits[4+3-:4];
+    seven_seg[4+3-:4] = M_digits_a_digits[0+3-:4];
+    seven_seg[8+3-:4] = M_digits_b_digits[4+3-:4];
+    seven_seg[12+3-:4] = M_digits_b_digits[0+3-:4];
     M_alu_a = 1'h0;
     M_alu_b = 1'h0;
     M_alu_alufn = 1'h0;
@@ -226,11 +269,6 @@ module au_top_0 (
     M_edge2f_in = M_player2f_out;
     M_gamereset_in = buttonreset;
     M_edgereset_in = M_gamereset_out;
-    led_debug[0+1-:2] = M_randgen_num[0+1-:2];
-    led_debug[2+0-:1] = M_gamereset_out;
-    led_debug[3+0-:1] = M_register_answer;
-    led_debug[5+0-:1] = M_register_p1_win;
-    led_debug[4+0-:1] = M_register_p2_win;
     
     case (M_fsm_state_q)
       6'h00: begin
@@ -546,7 +584,7 @@ module au_top_0 (
       6'h1a: begin
         M_alu_alufn = 6'h37;
         asel = 3'h0;
-        bsel = 3'h5;
+        bsel = 3'h6;
         we = 1'h1;
         ra = 5'h04;
         rb = 5'h04;
@@ -589,7 +627,7 @@ module au_top_0 (
       6'h1d: begin
         M_alu_alufn = 6'h37;
         asel = 3'h0;
-        bsel = 3'h5;
+        bsel = 3'h6;
         we = 1'h1;
         ra = 5'h05;
         rb = 1'h0;
@@ -691,6 +729,7 @@ module au_top_0 (
         M_fsm_state_d = 6'h01;
       end
     endcase
+    wd = 16'h0000;
     
     case (wdsel)
       1'h0: begin
@@ -703,7 +742,7 @@ module au_top_0 (
         wd = 1'h0;
       end
       2'h3: begin
-        wd = M_randgen_num[0+3-:4];
+        wd = M_randgen_num[0+6-:7];
       end
       3'h4: begin
         wd = M_randgen_num[0+1-:2];
@@ -749,6 +788,9 @@ module au_top_0 (
       end
       3'h5: begin
         M_alu_b = 16'h0009;
+      end
+      3'h6: begin
+        M_alu_b = 16'h0063;
       end
     endcase
     M_register_ra = ra;

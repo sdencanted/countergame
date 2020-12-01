@@ -4,7 +4,7 @@
    This is a temporary file and any changes made to it will be destroyed.
 */
 
-module matrix_lut_16 (
+module matrix_lut_17 (
     input [3:0] value,
     output reg [7:0] segs
   );

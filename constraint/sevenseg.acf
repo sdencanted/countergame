@@ -1,18 +1,17 @@
-pin seven_seg[0][0] B27;
-pin seven_seg[0][1] B30;
-pin seven_seg[0][2] B33;
-pin seven_seg[0][3] B36;
-pin seven_seg[1][0] B39;
-pin seven_seg[1][1] B42;
-pin seven_seg[1][2] B45;
-pin seven_seg[1][3] B48;
-
-
-pin seven_seg[2][0] B28;
-pin seven_seg[2][1] B31;
-pin seven_seg[2][2] B34;
-pin seven_seg[2][3] B37;
-pin seven_seg[3][0] B40;
-pin seven_seg[3][1] B43;
-pin seven_seg[3][2] B46;
-pin seven_seg[3][3] B49;
+pin seven_seg[2][0] A28;
+pin seven_seg[2][1] A31;
+pin seven_seg[2][2] A34;
+pin seven_seg[2][3] A37;
+pin seven_seg[3][0] A40;
+pin seven_seg[3][1] A43;
+pin seven_seg[3][2] A46;
+pin seven_seg[3][3] A49;
+  
+pin seven_seg[0][0] A24;
+pin seven_seg[0][1] A21;
+pin seven_seg[0][2] A18;
+pin seven_seg[0][3] A15;
+pin seven_seg[1][0] A12;
+pin seven_seg[1][1] A9;
+pin seven_seg[1][2] A6;
+pin seven_seg[1][3] A3;

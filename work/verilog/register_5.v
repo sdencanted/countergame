@@ -13,8 +13,8 @@ module register_5 (
     input [4:0] rc,
     input [15:0] write_data,
     input write_enable,
-    output reg [3:0] numa,
-    output reg [3:0] numb,
+    output reg [6:0] numa,
+    output reg [6:0] numb,
     output reg [3:0] p1_score,
     output reg [3:0] p2_score,
     output reg [1:0] sign,
@@ -41,8 +41,8 @@ module register_5 (
     if (rb == 5'h1f) begin
       rb_data = 16'h0000;
     end
-    numa = M_registers_q[64+0+3-:4];
-    numb = M_registers_q[80+0+3-:4];
+    numa = M_registers_q[64+0+6-:7];
+    numb = M_registers_q[80+0+6-:7];
     p1_score = M_registers_q[0+0+3-:4];
     p2_score = M_registers_q[32+0+3-:4];
     sign = M_registers_q[112+0+1-:2];

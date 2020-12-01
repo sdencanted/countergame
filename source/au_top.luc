@@ -88,6 +88,7 @@ global Bselmux {
   const THREE=3d3;
   const SEVEN=3d4;
   const NINE=3d5;
+  const NINETYNINE=3d6;
 }
 global Wdselmux {
   const ALU=3d0;
@@ -154,6 +155,8 @@ module au_top (
   }
   //decoder num_to_seg (#WIDTH(3));
   //decoder num_to_digit (#WIDTH(3));
+  bin_to_dec digits_a (#DIGITS(2));
+  bin_to_dec digits_b (#DIGITS(2));
   always {
     
     reset_cond.in = ~rst_n; // input raw inverted reset signal
@@ -184,6 +187,9 @@ module au_top (
     we=0;
     rc=0;
     wd=0;
+    
+    //turn off seven seg
+    seven_seg=4x{{4b0}};
     //connect register rbdata to fsm
     rb_data_fsm=register.rb_data;
     
@@ -191,14 +197,39 @@ module au_top (
     matrix.sign=register.sign;
     
     //connect register outputs to 7 segment displays
+    
+    //setup binary to decimal converter
+    digits_a.value=register.numa[6:0];
+    digits_b.value=register.numb[6:0];
     //player 1 score
-    seven_seg[0]=register.p1_score;
+    led_debug=0;
+    case(register.p1_score){
+      1:
+        led_debug[0]=1;
+      2:
+        led_debug[1:0]=2b11;
+      3:
+        led_debug[2:0]=3b111;
+    }
+    //led_debug
+    led_debug[2]=register.numa[6];
+    
     //player 2 score
-    seven_seg[3]=register.p2_score;
+    case(register.p2_score){
+      1:
+        led_debug[3]=1;
+      2:
+        led_debug[4:3]=2b11;
+      3:
+        led_debug[5:3]=3b111;
+    }
+    
     //number A
-    seven_seg[1]=register.numa;
+    seven_seg[0]=digits_a.digits[1];
+    seven_seg[1]=digits_a.digits[0];
     //number B
-    seven_seg[2]=register.numb;
+    seven_seg[2]=digits_b.digits[1];
+    seven_seg[3]=digits_b.digits[0];
     
     // default alu values
     alu.a=0;
@@ -217,11 +248,11 @@ module au_top (
     
     gamereset.in=buttonreset;
     edgereset.in=gamereset.out;
-    led_debug[1:0]=randgen.num[1:0];
-    led_debug[2]=gamereset.out;
-    led_debug[3]=register.answer;
-    led_debug[5]=register.p1_win;
-    led_debug[4]=register.p2_win;
+    //led_debug[1:0]=randgen.num[1:0];
+    //led_debug[2]=gamereset.out;
+    //led_debug[3]=register.answer;
+    //led_debug[5]=register.p1_win;
+    //led_debug[4]=register.p2_win;
     
     case(fsm_state.q){
       Gamestate.INIT:
@@ -478,7 +509,7 @@ module au_top (
       Gamestate.CHECKNUMA9:
         alu.alufn=Alufn.CMPLE;
         asel=Aselmux.RA;
-        bsel=Bselmux.NINE;
+        bsel=Bselmux.NINETYNINE;
         we=1;
         ra=Reg_addr.NUMA;
         rb=Reg_addr.NUMA;//debug
@@ -513,7 +544,7 @@ module au_top (
       Gamestate.CHECKNUMB9:
         alu.alufn=Alufn.CMPLE;
         asel=Aselmux.RA;
-        bsel=Bselmux.NINE;
+        bsel=Bselmux.NINETYNINE;
         we=1;
         ra=Reg_addr.NUMB;
         rb=0;
@@ -596,6 +627,7 @@ module au_top (
     
     
     //wdsel
+    wd=16b0;
     case(wdsel){
       0:
         wd=alu.result;
@@ -604,7 +636,7 @@ module au_top (
       2:
         wd=0;
       3:
-        wd=randgen.num[3:0];
+        wd=randgen.num[6:0];
       4:
         wd=randgen.num[1:0];
     }
@@ -627,6 +659,7 @@ module au_top (
       3: alu.b=16d3;//check for score and sign state
       4: alu.b=16d7;//feels redundant
       5: alu.b=16d9;//check if number is single digit
+      6: alu.b=16d99;//check if number is double digit
     }
     
     //register values

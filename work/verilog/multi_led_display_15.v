@@ -9,7 +9,7 @@
      DIGITS = 8
      DIV = 16
 */
-module multi_led_display_14 (
+module multi_led_display_15 (
     input clk,
     input rst,
     input [31:0] values,
@@ -24,7 +24,7 @@ module multi_led_display_14 (
   localparam DIGIT_BITS = 2'h3;
   
   wire [3-1:0] M_ctr_value;
-  counter_15 ctr (
+  counter_16 ctr (
     .clk(clk),
     .rst(rst),
     .value(M_ctr_value)
@@ -32,14 +32,14 @@ module multi_led_display_14 (
   
   wire [8-1:0] M_seg_dec_segs;
   reg [4-1:0] M_seg_dec_value;
-  matrix_lut_16 seg_dec (
+  matrix_lut_17 seg_dec (
     .value(M_seg_dec_value),
     .segs(M_seg_dec_segs)
   );
   
   wire [8-1:0] M_digit_dec_out;
   reg [3-1:0] M_digit_dec_in;
-  decoder_17 digit_dec (
+  decoder_18 digit_dec (
     .in(M_digit_dec_in),
     .out(M_digit_dec_out)
   );

@@ -17,7 +17,7 @@ module led_matrix_driver_7 (
   wire [8-1:0] M_led_display_seg;
   wire [8-1:0] M_led_display_sel;
   reg [32-1:0] M_led_display_values;
-  multi_led_display_14 led_display (
+  multi_led_display_15 led_display (
     .clk(clk),
     .rst(rst),
     .values(M_led_display_values),
