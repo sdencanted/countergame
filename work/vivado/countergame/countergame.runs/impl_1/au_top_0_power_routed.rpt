@@ -1,7 +1,7 @@
 Copyright 1986-2020 Xilinx, Inc. All Rights Reserved.
 ----------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version     : Vivado v.2020.1 (win64) Build 2902540 Wed May 27 19:54:49 MDT 2020
-| Date             : Wed Dec  2 03:10:02 2020
+| Date             : Wed Dec  2 15:46:32 2020
 | Host             : DESKTOP-FH39O76 running 64-bit major release  (build 9200)
 | Command          : report_power -file au_top_0_power_routed.rpt -pb au_top_0_power_summary_routed.pb -rpx au_top_0_power_routed.rpx
 | Design           : au_top_0
@@ -36,8 +36,8 @@ Table of Contents
 | Dynamic (W)              | 0.021        |
 | Device Static (W)        | 0.072        |
 | Effective TJA (C/W)      | 4.9          |
-| Max Ambient (C)          | 84.5         |
-| Junction Temperature (C) | 25.5         |
+| Max Ambient (C)          | 84.6         |
+| Junction Temperature (C) | 25.4         |
 | Confidence Level         | Low          |
 | Setting File             | ---          |
 | Simulation Activity File | ---          |
@@ -52,14 +52,14 @@ Table of Contents
 +----------------+-----------+----------+-----------+-----------------+
 | On-Chip        | Power (W) | Used     | Available | Utilization (%) |
 +----------------+-----------+----------+-----------+-----------------+
-| Clocks         |     0.002 |        3 |       --- |             --- |
-| Slice Logic    |     0.004 |     1302 |       --- |             --- |
-|   LUT as Logic |     0.004 |      493 |     20800 |            2.37 |
+| Clocks         |     0.003 |        3 |       --- |             --- |
+| Slice Logic    |     0.004 |     1298 |       --- |             --- |
+|   LUT as Logic |     0.004 |      489 |     20800 |            2.35 |
 |   CARRY4       |    <0.001 |       50 |      8150 |            0.61 |
-|   Register     |    <0.001 |      561 |     41600 |            1.35 |
+|   Register     |    <0.001 |      560 |     41600 |            1.35 |
 |   F7/F8 Muxes  |    <0.001 |       26 |     32600 |            0.08 |
 |   Others       |     0.000 |       43 |       --- |             --- |
-| Signals        |     0.005 |     1151 |       --- |             --- |
+| Signals        |     0.005 |     1147 |       --- |             --- |
 | I/O            |     0.009 |       55 |       170 |           32.35 |
 | Static Power   |     0.072 |          |           |                 |
 | Total          |     0.093 |          |           |                 |
@@ -72,7 +72,7 @@ Table of Contents
 +-----------+-------------+-----------+-------------+------------+-------------+-------------+------------+
 | Source    | Voltage (V) | Total (A) | Dynamic (A) | Static (A) | Powerup (A) | Budget (A)  | Margin (A) |
 +-----------+-------------+-----------+-------------+------------+-------------+-------------+------------+
-| Vccint    |       1.000 |     0.022 |       0.012 |      0.010 |       NA    | Unspecified | NA         |
+| Vccint    |       1.000 |     0.021 |       0.012 |      0.010 |       NA    | Unspecified | NA         |
 | Vccaux    |       1.800 |     0.013 |       0.000 |      0.013 |       NA    | Unspecified | NA         |
 | Vcco33    |       3.300 |     0.004 |       0.003 |      0.001 |       NA    | Unspecified | NA         |
 | Vcco25    |       2.500 |     0.000 |       0.000 |      0.000 |       NA    | Unspecified | NA         |
@@ -145,7 +145,7 @@ Table of Contents
 |   alu      |     0.003 |
 |     arith  |     0.002 |
 |   randgen  |     0.002 |
-|   register |     0.005 |
+|   register |     0.004 |
 +------------+-----------+
 
 

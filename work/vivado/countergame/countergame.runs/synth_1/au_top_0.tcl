@@ -84,24 +84,25 @@ set_property ip_cache_permissions {read write} [current_project]
 OPTRACE "Creating in-memory project" END { }
 OPTRACE "Adding files" START { }
 read_verilog -library xil_defaultlib {
-  C:/Users/Pootis-PC/Documents/Alchitry/countergame/work/vivado/countergame/countergame.srcs/sources_1/imports/verilog/alu_6.v
-  C:/Users/Pootis-PC/Documents/Alchitry/countergame/work/vivado/countergame/countergame.srcs/sources_1/imports/verilog/arithmetic_13.v
-  C:/Users/Pootis-PC/Documents/Alchitry/countergame/work/vivado/countergame/countergame.srcs/sources_1/imports/verilog/bin_to_dec_9.v
-  C:/Users/Pootis-PC/Documents/Alchitry/countergame/work/vivado/countergame/countergame.srcs/sources_1/imports/verilog/boole_11.v
-  C:/Users/Pootis-PC/Documents/Alchitry/countergame/work/vivado/countergame/countergame.srcs/sources_1/imports/verilog/button_conditioner_2.v
-  C:/Users/Pootis-PC/Documents/Alchitry/countergame/work/vivado/countergame/countergame.srcs/sources_1/imports/verilog/compare_14.v
-  C:/Users/Pootis-PC/Documents/Alchitry/countergame/work/vivado/countergame/countergame.srcs/sources_1/imports/verilog/counter_16.v
-  C:/Users/Pootis-PC/Documents/Alchitry/countergame/work/vivado/countergame/countergame.srcs/sources_1/imports/verilog/decoder_18.v
-  C:/Users/Pootis-PC/Documents/Alchitry/countergame/work/vivado/countergame/countergame.srcs/sources_1/imports/verilog/edge_detector_3.v
+  C:/Users/Pootis-PC/Documents/Alchitry/countergame/work/vivado/countergame/countergame.srcs/sources_1/imports/verilog/alu_9.v
+  C:/Users/Pootis-PC/Documents/Alchitry/countergame/work/vivado/countergame/countergame.srcs/sources_1/imports/verilog/arithmetic_15.v
+  C:/Users/Pootis-PC/Documents/Alchitry/countergame/work/vivado/countergame/countergame.srcs/sources_1/imports/verilog/bin_to_dec_10.v
+  C:/Users/Pootis-PC/Documents/Alchitry/countergame/work/vivado/countergame/countergame.srcs/sources_1/imports/verilog/boole_13.v
+  C:/Users/Pootis-PC/Documents/Alchitry/countergame/work/vivado/countergame/countergame.srcs/sources_1/imports/verilog/button_conditioner_3.v
+  C:/Users/Pootis-PC/Documents/Alchitry/countergame/work/vivado/countergame/countergame.srcs/sources_1/imports/verilog/compare_16.v
+  C:/Users/Pootis-PC/Documents/Alchitry/countergame/work/vivado/countergame/countergame.srcs/sources_1/imports/verilog/counter_1.v
+  C:/Users/Pootis-PC/Documents/Alchitry/countergame/work/vivado/countergame/countergame.srcs/sources_1/imports/verilog/counter_17.v
+  C:/Users/Pootis-PC/Documents/Alchitry/countergame/work/vivado/countergame/countergame.srcs/sources_1/imports/verilog/decoder_19.v
   C:/Users/Pootis-PC/Documents/Alchitry/countergame/work/vivado/countergame/countergame.srcs/sources_1/imports/verilog/edge_detector_4.v
-  C:/Users/Pootis-PC/Documents/Alchitry/countergame/work/vivado/countergame/countergame.srcs/sources_1/imports/verilog/led_matrix_driver_7.v
-  C:/Users/Pootis-PC/Documents/Alchitry/countergame/work/vivado/countergame/countergame.srcs/sources_1/imports/verilog/matrix_lut_17.v
-  C:/Users/Pootis-PC/Documents/Alchitry/countergame/work/vivado/countergame/countergame.srcs/sources_1/imports/verilog/multi_led_display_15.v
-  C:/Users/Pootis-PC/Documents/Alchitry/countergame/work/vivado/countergame/countergame.srcs/sources_1/imports/verilog/pipeline_10.v
-  C:/Users/Pootis-PC/Documents/Alchitry/countergame/work/vivado/countergame/countergame.srcs/sources_1/imports/verilog/pn_gen_8.v
-  C:/Users/Pootis-PC/Documents/Alchitry/countergame/work/vivado/countergame/countergame.srcs/sources_1/imports/verilog/register_5.v
-  C:/Users/Pootis-PC/Documents/Alchitry/countergame/work/vivado/countergame/countergame.srcs/sources_1/imports/verilog/reset_conditioner_1.v
-  C:/Users/Pootis-PC/Documents/Alchitry/countergame/work/vivado/countergame/countergame.srcs/sources_1/imports/verilog/shift_12.v
+  C:/Users/Pootis-PC/Documents/Alchitry/countergame/work/vivado/countergame/countergame.srcs/sources_1/imports/verilog/edge_detector_5.v
+  C:/Users/Pootis-PC/Documents/Alchitry/countergame/work/vivado/countergame/countergame.srcs/sources_1/imports/verilog/led_matrix_driver_6.v
+  C:/Users/Pootis-PC/Documents/Alchitry/countergame/work/vivado/countergame/countergame.srcs/sources_1/imports/verilog/matrix_lut_18.v
+  C:/Users/Pootis-PC/Documents/Alchitry/countergame/work/vivado/countergame/countergame.srcs/sources_1/imports/verilog/multi_led_display_12.v
+  C:/Users/Pootis-PC/Documents/Alchitry/countergame/work/vivado/countergame/countergame.srcs/sources_1/imports/verilog/pipeline_11.v
+  C:/Users/Pootis-PC/Documents/Alchitry/countergame/work/vivado/countergame/countergame.srcs/sources_1/imports/verilog/pn_gen_7.v
+  C:/Users/Pootis-PC/Documents/Alchitry/countergame/work/vivado/countergame/countergame.srcs/sources_1/imports/verilog/register_8.v
+  C:/Users/Pootis-PC/Documents/Alchitry/countergame/work/vivado/countergame/countergame.srcs/sources_1/imports/verilog/reset_conditioner_2.v
+  C:/Users/Pootis-PC/Documents/Alchitry/countergame/work/vivado/countergame/countergame.srcs/sources_1/imports/verilog/shift_14.v
   C:/Users/Pootis-PC/Documents/Alchitry/countergame/work/vivado/countergame/countergame.srcs/sources_1/imports/verilog/au_top_0.v
 }
 OPTRACE "Adding files" END { }

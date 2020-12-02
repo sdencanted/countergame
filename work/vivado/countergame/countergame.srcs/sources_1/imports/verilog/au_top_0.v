@@ -42,83 +42,113 @@ module au_top_0 (
   
   reg [15:0] wd;
   
+  reg clktwo;
+  
+  wire [1-1:0] M_ctr_value;
+  counter_1 ctr (
+    .clk(clk),
+    .rst(rst),
+    .value(M_ctr_value)
+  );
+  
   wire [1-1:0] M_reset_cond_out;
   reg [1-1:0] M_reset_cond_in;
-  reset_conditioner_1 reset_cond (
+  reset_conditioner_2 reset_cond (
     .clk(clk),
     .in(M_reset_cond_in),
     .out(M_reset_cond_out)
   );
   wire [1-1:0] M_player1t_out;
   reg [1-1:0] M_player1t_in;
-  button_conditioner_2 player1t (
+  button_conditioner_3 player1t (
     .clk(clk),
     .in(M_player1t_in),
     .out(M_player1t_out)
   );
   wire [1-1:0] M_player1f_out;
   reg [1-1:0] M_player1f_in;
-  button_conditioner_2 player1f (
+  button_conditioner_3 player1f (
     .clk(clk),
     .in(M_player1f_in),
     .out(M_player1f_out)
   );
   wire [1-1:0] M_player2t_out;
   reg [1-1:0] M_player2t_in;
-  button_conditioner_2 player2t (
+  button_conditioner_3 player2t (
     .clk(clk),
     .in(M_player2t_in),
     .out(M_player2t_out)
   );
   wire [1-1:0] M_player2f_out;
   reg [1-1:0] M_player2f_in;
-  button_conditioner_2 player2f (
+  button_conditioner_3 player2f (
     .clk(clk),
     .in(M_player2f_in),
     .out(M_player2f_out)
   );
   wire [1-1:0] M_gamereset_out;
   reg [1-1:0] M_gamereset_in;
-  button_conditioner_2 gamereset (
+  button_conditioner_3 gamereset (
     .clk(clk),
     .in(M_gamereset_in),
     .out(M_gamereset_out)
   );
   wire [1-1:0] M_edge1t_out;
   reg [1-1:0] M_edge1t_in;
-  edge_detector_3 edge1t (
+  edge_detector_4 edge1t (
     .clk(clk),
     .in(M_edge1t_in),
     .out(M_edge1t_out)
   );
   wire [1-1:0] M_edge1f_out;
   reg [1-1:0] M_edge1f_in;
-  edge_detector_3 edge1f (
+  edge_detector_4 edge1f (
     .clk(clk),
     .in(M_edge1f_in),
     .out(M_edge1f_out)
   );
   wire [1-1:0] M_edge2t_out;
   reg [1-1:0] M_edge2t_in;
-  edge_detector_3 edge2t (
+  edge_detector_4 edge2t (
     .clk(clk),
     .in(M_edge2t_in),
     .out(M_edge2t_out)
   );
   wire [1-1:0] M_edge2f_out;
   reg [1-1:0] M_edge2f_in;
-  edge_detector_3 edge2f (
+  edge_detector_4 edge2f (
     .clk(clk),
     .in(M_edge2f_in),
     .out(M_edge2f_out)
   );
   wire [1-1:0] M_edgereset_out;
   reg [1-1:0] M_edgereset_in;
-  edge_detector_4 edgereset (
+  edge_detector_5 edgereset (
     .clk(clk),
     .in(M_edgereset_in),
     .out(M_edgereset_out)
   );
+  wire [8-1:0] M_matrix_row;
+  wire [8-1:0] M_matrix_col;
+  reg [2-1:0] M_matrix_sign;
+  led_matrix_driver_6 matrix (
+    .clk(clk),
+    .rst(rst),
+    .sign(M_matrix_sign),
+    .row(M_matrix_row),
+    .col(M_matrix_col)
+  );
+  wire [32-1:0] M_randgen_num;
+  reg [1-1:0] M_randgen_next;
+  reg [32-1:0] M_randgen_seed;
+  pn_gen_7 randgen (
+    .clk(clk),
+    .rst(rst),
+    .next(M_randgen_next),
+    .seed(M_randgen_seed),
+    .num(M_randgen_num)
+  );
+  
   wire [16-1:0] M_register_ra_data;
   wire [16-1:0] M_register_rb_data;
   wire [7-1:0] M_register_numa;
@@ -134,7 +164,7 @@ module au_top_0 (
   reg [5-1:0] M_register_rc;
   reg [16-1:0] M_register_write_data;
   reg [1-1:0] M_register_write_enable;
-  register_5 register (
+  register_8 register (
     .clk(clk),
     .ra(M_register_ra),
     .rb(M_register_rb),
@@ -156,7 +186,7 @@ module au_top_0 (
   reg [16-1:0] M_alu_a;
   reg [16-1:0] M_alu_b;
   reg [6-1:0] M_alu_alufn;
-  alu_6 alu (
+  alu_9 alu (
     .clk(clk),
     .a(M_alu_a),
     .b(M_alu_b),
@@ -165,37 +195,17 @@ module au_top_0 (
   );
   reg [5:0] M_fsm_state_d, M_fsm_state_q = 1'h0;
   reg [31:0] M_seed_d, M_seed_q = 1'h0;
-  wire [8-1:0] M_matrix_row;
-  wire [8-1:0] M_matrix_col;
-  reg [2-1:0] M_matrix_sign;
-  led_matrix_driver_7 matrix (
-    .clk(clk),
-    .rst(rst),
-    .sign(M_matrix_sign),
-    .row(M_matrix_row),
-    .col(M_matrix_col)
-  );
-  wire [32-1:0] M_randgen_num;
-  reg [1-1:0] M_randgen_next;
-  reg [32-1:0] M_randgen_seed;
-  pn_gen_8 randgen (
-    .clk(clk),
-    .rst(rst),
-    .next(M_randgen_next),
-    .seed(M_randgen_seed),
-    .num(M_randgen_num)
-  );
   
   wire [8-1:0] M_digits_a_digits;
   reg [7-1:0] M_digits_a_value;
-  bin_to_dec_9 digits_a (
+  bin_to_dec_10 digits_a (
     .value(M_digits_a_value),
     .digits(M_digits_a_digits)
   );
   
   wire [8-1:0] M_digits_b_digits;
   reg [7-1:0] M_digits_b_value;
-  bin_to_dec_9 digits_b (
+  bin_to_dec_10 digits_b (
     .value(M_digits_b_value),
     .digits(M_digits_b_digits)
   );
@@ -204,6 +214,7 @@ module au_top_0 (
     M_seed_d = M_seed_q;
     M_fsm_state_d = M_fsm_state_q;
     
+    clktwo = M_ctr_value[0+0-:1];
     M_reset_cond_in = ~rst_n;
     rst = M_reset_cond_out;
     usb_tx = usb_rx;
@@ -239,7 +250,6 @@ module au_top_0 (
         led_debug[0+2-:3] = 3'h7;
       end
     endcase
-    led_debug[2+0-:1] = M_register_numa[6+0-:1];
     
     case (M_register_p2_score)
       1'h1: begin

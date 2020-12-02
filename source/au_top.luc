@@ -128,7 +128,7 @@ module au_top (
   sig rc[5];
   sig we;
   sig wd[16];
-  .clk(clk) {
+  .clk(clk){
     // The reset conditioner is used to synchronize the reset signal to the FPGA
     // clock. This ensures the entire FPGA comes out of reset at the same time.
     reset_conditioner reset_cond;
@@ -149,7 +149,6 @@ module au_top (
     .rst(rst) {
       led_matrix_driver matrix;
       pn_gen randgen;
-      
       //multi_seg_display seg_display;
     }
   }
@@ -158,7 +157,6 @@ module au_top (
   bin_to_dec digits_a (#DIGITS(2));
   bin_to_dec digits_b (#DIGITS(2));
   always {
-    
     reset_cond.in = ~rst_n; // input raw inverted reset signal
     rst = reset_cond.out;   // conditioned reset
     
@@ -212,7 +210,7 @@ module au_top (
         led_debug[2:0]=3b111;
     }
     //led_debug
-    led_debug[2]=register.numa[6];
+    //led_debug[2]=register.answer;
     
     //player 2 score
     case(register.p2_score){
